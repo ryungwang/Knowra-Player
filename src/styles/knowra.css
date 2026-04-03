@@ -1,0 +1,6 @@
+/* knowra.css - KnowraPlayer 전용 스타일 보조 */
+
+.knowra-player-wrapper {
+  width: 100%;
+  max-width: var(--kp-player-max-width);
+}

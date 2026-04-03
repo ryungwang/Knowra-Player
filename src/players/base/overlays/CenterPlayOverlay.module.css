@@ -1,0 +1,23 @@
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.icon {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  padding: 16px;
+  display: flex;
+  animation: fadeOut 0.6s ease forwards;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; transform: scale(1); }
+  60% { opacity: 0.8; transform: scale(1.15); }
+  100% { opacity: 0; transform: scale(1.3); }
+}

@@ -1,0 +1,21 @@
+/* CSS 버그 수정: position: absolute 제거 - KnowraPlayer.module.css의 .controlsWrapper가 positioning 담당 */
+.controls {
+  display: flex;
+  flex-direction: column;
+  padding: 0 12px 8px;
+  gap: 0;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.left,
+.right {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}

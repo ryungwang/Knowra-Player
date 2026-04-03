@@ -1,0 +1,59 @@
+/* base.css - global.css + variables.css 통합 */
+
+:root {
+  /* 브랜드 컬러 */
+  --kp-accent: #ff0000;
+  --kp-accent-hover: #cc0000;
+  --kp-link: #3ea6ff;
+
+  /* 배경 */
+  --kp-bg-primary: #0f0f0f;
+  --kp-bg-secondary: #181818;
+  --kp-bg-card: #212121;
+
+  /* 텍스트 */
+  --kp-text-primary: #f1f1f1;
+  --kp-text-secondary: rgba(255, 255, 255, 0.7);
+  --kp-text-muted: rgba(255, 255, 255, 0.4);
+
+  /* 보더 */
+  --kp-border: rgba(255, 255, 255, 0.1);
+
+  /* 반응형 */
+  --kp-player-max-width: 960px;
+
+  /* 타이포그래피 */
+  --kp-font: 'YouTube Sans', 'Roboto', 'Noto Sans KR', system-ui, -apple-system, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--kp-font);
+  background: var(--kp-bg-primary);
+  color: var(--kp-text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  font-family: inherit;
+}

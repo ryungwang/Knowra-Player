@@ -1,0 +1,15 @@
+/* shorts.css - ShortsPlayer 전용 스타일 보조 */
+
+.shorts-scroll-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 0;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+}
+
+.shorts-scroll-container > * {
+  scroll-snap-align: start;
+}

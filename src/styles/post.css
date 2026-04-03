@@ -1,0 +1,8 @@
+/* post.css - PostPlayer 전용 스타일 보조 */
+
+.post-player-card {
+  background: var(--kp-bg-card);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--kp-border);
+}
