@@ -1,43 +1,42 @@
 import { useEffect, useRef } from 'react';
 
-/**
- * IntersectionObserver 기반 자동재생 훅
- * 화면에 진입하면 play(), 이탈하면 pause()
- *
- * @param {React.RefObject} videoRef - video 요소 ref
- * @param {{ enabled?: boolean, threshold?: number }} options
- */
-export function useAutoPlayOnView(videoRef, { enabled = true, threshold = 0.6 } = {}) {
+export function useAutoPlayOnView(
+  videoRef,
+  {
+    enabled = true,
+    threshold = 0.6,
+    muted = true,
+    pauseOnExit = true,
+  } = {},
+) {
   const observerRef = useRef(null);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) return undefined;
     const video = videoRef.current;
-    if (!video) return;
+    if (!video) return undefined;
 
-    // 모바일 자동재생 정책을 위해 muted 강제
-    video.muted = true;
+    video.muted = muted || video.muted;
 
     observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            video.play().catch(() => {});
-          } else {
-            video.pause();
-          }
-        });
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+          return;
+        }
+
+        if (pauseOnExit) {
+          video.pause();
+        }
       },
-      { threshold }
+      { threshold },
     );
 
     observerRef.current.observe(video);
 
     return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-        observerRef.current = null;
-      }
+      observerRef.current?.disconnect();
+      observerRef.current = null;
     };
-  }, [videoRef, enabled, threshold]);
+  }, [videoRef, enabled, threshold, muted, pauseOnExit]);
 }

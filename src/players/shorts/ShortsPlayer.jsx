@@ -1,115 +1,268 @@
-import { useRef, useCallback, useState } from 'react';
-import { useVideoPlayer } from '../../core/useVideoPlayer';
+import { useCallback, useEffect, useState } from 'react';
+import { formatCount } from '../../core/formatCount';
 import { useAutoPlayOnView } from '../../core/useAutoPlayOnView';
-import LoadingOverlay from '../base/overlays/LoadingOverlay';
+import { useVideoPlayer } from '../../core/useVideoPlayer';
+import CenterPlayOverlay from '../base/overlays/CenterPlayOverlay';
 import ErrorOverlay from '../base/overlays/ErrorOverlay';
+import LoadingOverlay from '../base/overlays/LoadingOverlay';
 import styles from './ShortsPlayer.module.css';
 
-/**
- * ShortsPlayer - 9:16 세로형 짧은 영상 플레이어
- * - useAutoPlayOnView: 화면에 보일 때 자동재생
- * - videoRegistry 연동 (useVideoPlayer 내부에서 처리)
- * - loop prop 지원
- * - muted 기본값
- * - 우측 액션 버튼 영역 (좋아요/댓글 - UI만)
- */
-export default function ShortsPlayer({
-  src,
-  poster,
-  title,
-  loop = true,
-  autoPlayOnView = true,
-}) {
-  const player = useVideoPlayer();
-  const [showControls, setShowControls] = useState(false);
+function ActionButton({ active = false, label, count, onClick, children }) {
+  return (
+    <button
+      className={`${styles.actionBtn} ${active ? styles.actionActive : ''}`}
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick?.();
+      }}
+      aria-label={label}
+      aria-pressed={active || undefined}
+      title={label}
+    >
+      <span className={styles.actionIcon}>{children}</span>
+      {count !== undefined && <span className={styles.actionLabel}>{formatCount(count)}</span>}
+    </button>
+  );
+}
 
-  // useAutoPlayOnView에서 videoRef를 직접 사용
-  useAutoPlayOnView(player.videoRef, { enabled: autoPlayOnView, threshold: 0.6 });
+function HeartIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true">
+      <path d="M12 21.35 10.55 20.03C5.4 15.36 2 12.27 2 8.5 2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53L12 21.35z" />
+    </svg>
+  );
+}
 
-  const handleTogglePlay = useCallback(() => {
-    player.togglePlay();
-  }, [player]);
+function CommentIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true">
+      <path d="M21 6.5A4.5 4.5 0 0 0 16.5 2h-9A4.5 4.5 0 0 0 3 6.5v5A4.5 4.5 0 0 0 7.5 16H8v4.25c0 .6.71.91 1.15.5L14.2 16h2.3A4.5 4.5 0 0 0 21 11.5v-5z" />
+    </svg>
+  );
+}
 
-  const progress = player.duration > 0 ? (player.currentTime / player.duration) * 100 : 0;
+function ShareIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true">
+      <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7a3.3 3.3 0 0 0 0-1.39l7.05-4.11A2.99 2.99 0 1 0 15 5c0 .24.04.47.09.7L8.04 9.81a3 3 0 1 0 0 4.38l7.12 4.17c-.05.2-.08.42-.08.64a2.92 2.92 0 1 0 2.92-2.92z" />
+    </svg>
+  );
+}
+
+function BookmarkIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true">
+      <path d="M6 3h12a1 1 0 0 1 1 1v18l-7-4-7 4V4a1 1 0 0 1 1-1z" />
+    </svg>
+  );
+}
+
+function VolumeIcon({ muted }) {
+  if (muted) {
+    return (
+      <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true">
+        <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zM4.27 3 3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3z" />
+      </svg>
+    );
+  }
 
   return (
-    <div
-      className={styles.container}
-      onMouseEnter={() => setShowControls(true)}
-      onMouseLeave={() => setShowControls(false)}
+    <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true">
+      <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+    </svg>
+  );
+}
+
+export default function ShortsPlayer({
+  src,
+  sources,
+  poster,
+  title,
+  author = 'haru.creator',
+  avatar,
+  caption,
+  likes = 28400,
+  comments = 1260,
+  shares = 884,
+  loop = true,
+  autoPlayOnView = true,
+  className = '',
+  style,
+  videoProps,
+  onPlay,
+  onPause,
+  onEnded,
+  onWaiting,
+  onCanPlay,
+  onTimeUpdate,
+  onDurationChange,
+  onProgress,
+  onVolumeChange,
+  onRateChange,
+  onError,
+  onLikeChange,
+  onSaveChange,
+  onFollowChange,
+  onComment,
+  onShare,
+}) {
+  const [liked, setLiked] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [followed, setFollowed] = useState(false);
+  const [overlay, setOverlay] = useState({ trigger: 0, type: 'play' });
+
+  const {
+    videoRef,
+    isPlaying,
+    currentTime,
+    duration,
+    isMuted,
+    isLoading,
+    error,
+    togglePlay,
+    toggleMute,
+  } = useVideoPlayer({
+    defaultMuted: true,
+    defaultVolume: 0.85,
+    onPlay,
+    onPause,
+    onEnded,
+    onWaiting,
+    onCanPlay,
+    onTimeUpdate,
+    onDurationChange,
+    onProgress,
+    onVolumeChange,
+    onRateChange,
+    onError,
+  });
+
+  useAutoPlayOnView(videoRef, {
+    enabled: autoPlayOnView,
+    threshold: 0.65,
+    muted: true,
+  });
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.loop = loop;
+  }, [loop, videoRef]);
+
+  const triggerOverlay = useCallback((type) => {
+    setOverlay((current) => ({ trigger: current.trigger + 1, type }));
+  }, []);
+
+  const handleTogglePlay = useCallback(() => {
+    togglePlay();
+    triggerOverlay(isPlaying ? 'pause' : 'play');
+  }, [isPlaying, togglePlay, triggerOverlay]);
+
+  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const displayCaption = caption || title;
+
+  return (
+    <article
+      className={`${styles.container} ${className}`}
+      style={style}
+      onClick={handleTogglePlay}
     >
-      {/* 비디오 */}
       <video
-        ref={player.videoRef}
+        {...videoProps}
+        ref={videoRef}
         className={styles.video}
-        src={src}
+        src={sources?.length ? undefined : src}
         poster={poster}
         loop={loop}
-        muted
+        muted={isMuted}
         playsInline
-        onClick={handleTogglePlay}
-      />
+        preload="metadata"
+      >
+        {sources?.map((source) => (
+          <source key={source.src} src={source.src} type={source.type} />
+        ))}
+      </video>
 
-      {/* 로딩 */}
-      {player.isLoading && <LoadingOverlay />}
+      <div className={styles.topShade} />
+      <div className={styles.bottomShade} />
 
-      {/* 오류 */}
-      {player.error && <ErrorOverlay message={player.error} />}
+      {isLoading && <LoadingOverlay />}
+      {error && <ErrorOverlay message={error} />}
+      <CenterPlayOverlay isPlaying={isPlaying} trigger={overlay.trigger} type={overlay.type} />
 
-      {/* 하단 진행 바 */}
-      <div className={styles.progressBar}>
+      <div className={styles.progressBar} aria-hidden="true">
         <div className={styles.progressFill} style={{ width: `${progress}%` }} />
       </div>
 
-      {/* 중앙 재생/정지 버튼 오버레이 (hover 시) */}
-      {showControls && (
-        <button
-          className={styles.playBtn}
-          onClick={handleTogglePlay}
-          aria-label={player.isPlaying ? '일시정지' : '재생'}
-        >
-          {player.isPlaying ? (
-            <svg viewBox="0 0 24 24" fill="white" width="36" height="36">
-              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" fill="white" width="36" height="36">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          )}
-        </button>
-      )}
+      <button
+        className={styles.muteBtn}
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleMute();
+        }}
+        aria-label={isMuted ? '소리 켜기' : '음소거'}
+        title={isMuted ? '소리 켜기' : '음소거'}
+      >
+        <VolumeIcon muted={isMuted} />
+      </button>
 
-      {/* 우측 액션 버튼 영역 (UI만, 기능 없음) */}
       <div className={styles.actions}>
-        <button className={styles.actionBtn} aria-label="좋아요" title="좋아요">
-          <svg viewBox="0 0 24 24" fill="white" width="28" height="28">
-            <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
-          </svg>
-          <span className={styles.actionLabel}>좋아요</span>
-        </button>
-
-        <button className={styles.actionBtn} aria-label="댓글" title="댓글">
-          <svg viewBox="0 0 24 24" fill="white" width="28" height="28">
-            <path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z" />
-          </svg>
-          <span className={styles.actionLabel}>댓글</span>
-        </button>
-
-        <button className={styles.actionBtn} aria-label="공유" title="공유">
-          <svg viewBox="0 0 24 24" fill="white" width="28" height="28">
-            <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z" />
-          </svg>
-          <span className={styles.actionLabel}>공유</span>
-        </button>
+        <ActionButton
+          active={liked}
+          label="좋아요"
+          count={likes + (liked ? 1 : 0)}
+          onClick={() => setLiked((value) => {
+            const next = !value;
+            onLikeChange?.(next);
+            return next;
+          })}
+        >
+          <HeartIcon />
+        </ActionButton>
+        <ActionButton label="댓글" count={comments} onClick={onComment}>
+          <CommentIcon />
+        </ActionButton>
+        <ActionButton label="공유" count={shares} onClick={onShare}>
+          <ShareIcon />
+        </ActionButton>
+        <ActionButton
+          active={saved}
+          label="저장"
+          onClick={() => setSaved((value) => {
+            const next = !value;
+            onSaveChange?.(next);
+            return next;
+          })}
+        >
+          <BookmarkIcon />
+        </ActionButton>
       </div>
 
-      {/* 하단 제목 */}
-      {title && (
-        <div className={styles.titleArea}>
-          <p className={styles.title}>{title}</p>
+      <div className={styles.meta}>
+        <div className={styles.authorRow}>
+          <div className={styles.avatar}>
+            {avatar ? <img src={avatar} alt="" /> : <span>{author.slice(0, 1).toUpperCase()}</span>}
+          </div>
+          <strong className={styles.author}>@{author}</strong>
+          <button
+            className={`${styles.followBtn} ${followed ? styles.followed : ''}`}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setFollowed((value) => {
+                const next = !value;
+                onFollowChange?.(next);
+                return next;
+              });
+            }}
+          >
+            {followed ? '팔로잉' : '팔로우'}
+          </button>
         </div>
-      )}
-    </div>
+        {displayCaption && <p className={styles.caption}>{displayCaption}</p>}
+      </div>
+    </article>
   );
 }

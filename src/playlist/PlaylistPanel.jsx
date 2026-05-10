@@ -5,7 +5,7 @@ export default function PlaylistPanel({ items, activeIndex, onSelect }) {
   if (!items || items.length === 0) return null;
 
   return (
-    <aside className={styles.panel}>
+    <aside className={styles.panel} aria-label="재생목록">
       <div className={styles.header}>
         <h2 className={styles.heading}>재생목록</h2>
         <span className={styles.count}>{activeIndex + 1} / {items.length}</span>

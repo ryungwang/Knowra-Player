@@ -1,13 +1,96 @@
-/* 카드형 인라인 플레이어 */
-.container {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  background: #000;
-  border-radius: 10px;
+.card {
+  width: min(100%, 560px);
   overflow: hidden;
-  user-select: none;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--kp-border);
+  border-radius: 8px;
+  color: var(--kp-text-primary);
+  background: #111;
+}
+
+.header {
+  height: 58px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--kp-border);
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+  color: #111;
+  background: #f4f4f4;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile {
+  min-width: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.profile strong {
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile span {
+  overflow: hidden;
+  color: var(--kp-text-secondary);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.moreBtn,
+.iconBtn,
+.playBtn {
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+  background: transparent;
+  cursor: pointer;
+}
+
+.moreBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  color: #fff;
+}
+
+.moreBtn:hover,
+.moreBtn:focus-visible {
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+
+.media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #000;
 }
 
 .video {
@@ -18,104 +101,180 @@
   cursor: pointer;
 }
 
-/* 하단 컨트롤 오버레이 - hover 시 표시 */
-.controls {
+.videoControls {
   position: absolute;
-  bottom: 0;
   left: 0;
   right: 0;
+  bottom: 0;
+  z-index: 12;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  padding: 38px 12px 12px;
+  color: #fff;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.82));
   opacity: 0;
-  transition: opacity 0.2s ease;
-  z-index: 10;
+  transition: opacity 0.18s ease;
 }
 
-.controls.visible {
+.videoControls.visible {
   opacity: 1;
 }
 
 .playBtn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: background 0.15s;
-  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+  background: rgba(255, 255, 255, 0.12);
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
 }
 
-.playBtn:hover {
-  background: rgba(255, 255, 255, 0.15);
+.playBtn:hover,
+.playBtn:focus-visible {
+  background: rgba(255, 255, 255, 0.22);
+  outline: none;
 }
 
-/* 진행 바 */
+.playBtn:active {
+  transform: scale(0.94);
+}
+
 .progressBar {
   flex: 1;
-  padding: 8px 0;
+  min-width: 64px;
+  padding: 10px 0;
   cursor: pointer;
 }
 
 .progressTrack {
   position: relative;
-  width: 100%;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 2px;
+  height: 4px;
   overflow: hidden;
-  transition: height 0.1s;
-}
-
-.progressBar:hover .progressTrack {
-  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.32);
 }
 
 .progressFill {
   height: 100%;
-  background: #ff0000;
-  border-radius: 2px;
+  border-radius: inherit;
+  background: #fff;
   transition: width 0.1s linear;
 }
 
 .time {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 11px;
-  white-space: nowrap;
   font-variant-numeric: tabular-nums;
-  flex-shrink: 0;
+  white-space: nowrap;
 }
 
-/* 상단 제목 - hover 시 표시 */
-.titleBar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  padding: 10px 12px 24px;
-  background: linear-gradient(rgba(0, 0, 0, 0.6), transparent);
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  z-index: 10;
-  pointer-events: none;
+.footer {
+  padding: 12px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.titleBar.visible {
-  opacity: 1;
+.actionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.title {
+.leftActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.iconBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  padding: 0;
+  color: #fff;
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.iconBtn:hover,
+.iconBtn:focus-visible {
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.iconBtn:active {
+  transform: scale(0.94);
+}
+
+.iconBtn.active {
+  color: #ff3155;
+}
+
+.likes {
   color: #fff;
   font-size: 13px;
-  font-weight: 500;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
+  font-weight: 760;
+}
+
+.caption {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.caption strong {
+  color: #fff;
+  font-weight: 780;
+}
+
+.commentLink {
+  width: fit-content;
+  border: 0;
+  padding: 0;
+  color: var(--kp-text-secondary);
+  background: transparent;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.commentLink:hover,
+.commentLink:focus-visible {
+  color: #fff;
+  outline: none;
+}
+
+.volumeMeter {
+  width: 100%;
+  height: 3px;
   overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.volumeMeter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--kp-link);
+  transition: width 0.15s ease;
+}
+
+@media (max-width: 520px) {
+  .card {
+    width: 100%;
+  }
+
+  .media {
+    aspect-ratio: 1 / 1;
+  }
+
+  .time {
+    display: none;
+  }
 }

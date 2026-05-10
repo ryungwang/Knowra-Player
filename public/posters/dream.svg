@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#141414"/>
+      <stop offset="0.5" stop-color="#39404a"/>
+      <stop offset="1" stop-color="#9b6b5f"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <rect x="120" y="110" width="1040" height="500" rx="28" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="4"/>
+  <circle cx="296" cy="250" r="72" fill="#9fd3ff" opacity="0.52"/>
+  <circle cx="980" cy="470" r="120" fill="#ffcb8b" opacity="0.4"/>
+  <text x="120" y="366" fill="#fff" font-family="Inter, Arial, sans-serif" font-size="76" font-weight="800">Studio Cut</text>
+  <text x="124" y="438" fill="#d9d9d9" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="600">Community-grade playback</text>
+</svg>

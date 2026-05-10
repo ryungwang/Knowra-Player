@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#172033"/>
+      <stop offset="0.55" stop-color="#2f735f"/>
+      <stop offset="1" stop-color="#f4b35f"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <circle cx="1020" cy="160" r="112" fill="#ffe08a" opacity="0.9"/>
+  <rect x="92" y="504" width="1096" height="110" rx="55" fill="#0b111d" opacity="0.35"/>
+  <text x="92" y="364" fill="#fff" font-family="Inter, Arial, sans-serif" font-size="76" font-weight="800">Open Movie Showcase</text>
+  <text x="96" y="438" fill="#dce8ff" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="600">Wide player demo</text>
+  <path d="M590 504v110l94-55-94-55z" fill="#fff"/>
+</svg>

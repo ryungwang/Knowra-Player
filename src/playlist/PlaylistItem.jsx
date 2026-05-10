@@ -5,6 +5,7 @@ export default function PlaylistItem({ item, index, isActive, onClick }) {
   return (
     <button
       className={`${styles.item} ${isActive ? styles.active : ''}`}
+      type="button"
       onClick={() => onClick(index)}
       aria-label={`${item.title} 재생`}
       aria-current={isActive ? 'true' : undefined}
@@ -14,7 +15,7 @@ export default function PlaylistItem({ item, index, isActive, onClick }) {
           <img src={item.poster} alt="" className={styles.thumb} />
         ) : (
           <div className={styles.thumbPlaceholder}>
-            <svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.4)" width="24" height="24">
+            <svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.48)" width="24" height="24" aria-hidden="true">
               <path d="M8 5v14l11-7z" />
             </svg>
           </div>
@@ -23,7 +24,7 @@ export default function PlaylistItem({ item, index, isActive, onClick }) {
           <span className={styles.duration}>{formatTime(item.duration)}</span>
         )}
         {isActive && (
-          <div className={styles.activeIndicator}>
+          <div className={styles.activeIndicator} aria-hidden="true">
             <span className={styles.bar} />
             <span className={styles.bar} />
             <span className={styles.bar} />

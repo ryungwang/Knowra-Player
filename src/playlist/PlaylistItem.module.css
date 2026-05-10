@@ -9,11 +9,15 @@
   padding: 8px 12px;
   border-radius: 6px;
   text-align: left;
-  transition: background 0.15s;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
 }
 
-.item:hover {
+.item:hover,
+.item:focus-visible {
   background: rgba(255, 255, 255, 0.07);
+  outline: none;
 }
 
 .item.active {
@@ -97,7 +101,7 @@
 .title {
   color: #fff;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 660;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;

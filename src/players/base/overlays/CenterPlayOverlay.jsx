@@ -1,35 +1,61 @@
-import { useEffect, useState } from 'react';
 import styles from './CenterPlayOverlay.module.css';
 
-/**
- * 클릭 시 중앙에 재생/일시정지 아이콘을 잠깐 표시하는 오버레이
- */
-export default function CenterPlayOverlay({ isPlaying, trigger }) {
-  const [visible, setVisible] = useState(false);
+function OverlayIcon({ type }) {
+  if (type === 'forward') {
+    return (
+      <svg viewBox="0 0 24 24" fill="white" width="42" height="42" aria-hidden="true">
+        <path d="M5 5v14l8-7-8-7zm9 0v14l8-7-8-7z" />
+      </svg>
+    );
+  }
 
-  useEffect(() => {
-    if (trigger === 0) return;
-    setVisible(true);
-    const timer = setTimeout(() => setVisible(false), 600);
-    return () => clearTimeout(timer);
-  }, [trigger]);
+  if (type === 'backward') {
+    return (
+      <svg viewBox="0 0 24 24" fill="white" width="42" height="42" aria-hidden="true">
+        <path d="M10 5v14l-8-7 8-7zm9 0v14l-8-7 8-7z" />
+      </svg>
+    );
+  }
 
-  if (!visible) return null;
+  if (type === 'fullscreen') {
+    return (
+      <svg viewBox="0 0 24 24" fill="white" width="42" height="42" aria-hidden="true">
+        <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
+      </svg>
+    );
+  }
+
+  if (type === 'pause') {
+    return (
+      <svg viewBox="0 0 24 24" fill="white" width="52" height="52" aria-hidden="true">
+        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+      </svg>
+    );
+  }
 
   return (
-    <div className={styles.overlay}>
+    <svg viewBox="0 0 24 24" fill="white" width="52" height="52" aria-hidden="true">
+      <path d="M8 5v14l11-7z" />
+    </svg>
+  );
+}
+
+export default function CenterPlayOverlay({
+  isPlaying,
+  trigger,
+  type,
+  label,
+  side = 'center',
+}) {
+  if (trigger === 0) return null;
+
+  const resolvedType = type || (isPlaying ? 'play' : 'pause');
+
+  return (
+    <div key={trigger} className={`${styles.overlay} ${styles[side] || styles.center}`}>
       <div className={styles.icon}>
-        {isPlaying ? (
-          // 재생 중 → 재생 아이콘 표시 (방금 재생 시작했을 때)
-          <svg viewBox="0 0 24 24" fill="white" width="64" height="64">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-        ) : (
-          // 일시정지 → 멈춤 아이콘 표시
-          <svg viewBox="0 0 24 24" fill="white" width="64" height="64">
-            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-          </svg>
-        )}
+        <OverlayIcon type={resolvedType} />
+        {label && <span className={styles.label}>{label}</span>}
       </div>
     </div>
   );

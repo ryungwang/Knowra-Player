@@ -1,17 +1,52 @@
 {
-  "name": "knowra-player",
-  "private": true,
-  "version": "0.0.0",
+  "name": "haru-player",
+  "private": false,
+  "version": "0.1.0",
+  "description": "Reusable React video players for horizontal watch pages, shorts feeds, and community posts.",
+  "license": "UNLICENSED",
   "type": "module",
+  "main": "./dist/haru-player.cjs",
+  "module": "./dist/haru-player.js",
+  "types": "./types/index.d.ts",
+  "style": "./dist/style.css",
+  "keywords": [
+    "react",
+    "video",
+    "player",
+    "shorts",
+    "reels",
+    "community"
+  ],
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./dist/haru-player.js",
+      "require": "./dist/haru-player.cjs"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist",
+    "types"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run lint && npm run build && npm audit"
   },
-  "dependencies": {
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
@@ -22,6 +57,8 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "vite": "^8.0.1"
   }
 }

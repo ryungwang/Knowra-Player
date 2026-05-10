@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1350">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#111827"/>
+      <stop offset="0.42" stop-color="#5d4b8a"/>
+      <stop offset="1" stop-color="#ef7d57"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1350" fill="url(#bg)"/>
+  <rect x="94" y="156" width="892" height="1038" rx="44" fill="#000" opacity="0.18"/>
+  <text x="112" y="738" fill="#fff" font-family="Inter, Arial, sans-serif" font-size="72" font-weight="850">Post Player</text>
+  <text x="116" y="814" fill="#fff" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="650">Inline media card</text>
+  <path d="M480 530v190l156-95-156-95z" fill="#fff"/>
+</svg>
